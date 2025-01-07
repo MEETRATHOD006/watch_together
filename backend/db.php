@@ -1,5 +1,5 @@
 <?php
-$host = "dpg-ctukiatumphs73ep3pm0-a";
+$host = "dpg-ctukiatumphs73ep3pm0-a.oregon-postgres.render.com";
 $user = "5432";
 $password = "VsgM2ZrXMf8MONqLK2jCgACpXs8B3G9q";
 $dbname = "watch_together";
