@@ -28,7 +28,7 @@ createRoomConfirmButton.addEventListener("click", async () => {
 
   try {
     const response = await fetch(
-      "https://192.168.1.4/watch-together/Backend/create_room.php",
+      "https://watch-together-ef18.onrender.com/watch-together/Backend/create_room.php",
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
