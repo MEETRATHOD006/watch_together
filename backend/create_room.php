@@ -1,19 +1,25 @@
 <?php
 include 'db.php';
 
+// Set CORS headers
 header('Content-Type: application/json');
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Origin: *");  // Or specify a specific domain instead of *
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Origin: *"); // Replace * with a specific domain if needed in production
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 // Validate POST data
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['room_id']) && isset($_POST['room_name']) && isset($_POST['admin_name'])) {
-    $roomId = $_POST['room_id'];
-    $roomName = $_POST['room_name'];
-    $adminName = $_POST['admin_name'];
+$input = json_decode(file_get_contents('php://input'), true);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($input['room_id'], $input['room_name'], $input['admin_name'])) {
+    $roomId = trim($input['room_id']);
+    $roomName = trim($input['room_name']);
+    $adminName = trim($input['admin_name']);
 
     if (empty($roomId) || empty($roomName) || empty($adminName)) {
         echo json_encode(['status' => 'error', 'message' => 'Room ID, Room Name, and Admin Name cannot be empty']);
@@ -38,6 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['room_id']) && isset($
     $stmt->close();
     $conn->close();
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request. Please provide Room ID, Room Name, and Admin Name.']);
 }
 ?>
