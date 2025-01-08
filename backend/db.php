@@ -3,7 +3,7 @@
 $host = "db.pezdqmellmcmewcvssbv.supabase.co"; // Replace with your Supabase DB host
 $user = "postgres";
 $password = "8594"; // Use your actual Supabase DB password
-$dbname = "postgres"; // Default database name in Supabase is usually 'postgres'
+$dbname = "watch_together"; // Default database name in Supabase is usually 'postgres'
 
 // CORS Headers
 header("Access-Control-Allow-Origin: *");
