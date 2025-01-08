@@ -3,7 +3,7 @@ include 'db.php';
 
 // Set CORS headers
 header('Content-Type: application/json');
-header("Access-Control-Allow-Origin: *"); // Replace * with a specific domain if needed in production
+header("Access-Control-Allow-Origin: *"); // Replace * with your domain in production
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
@@ -21,28 +21,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($input['room_id'], $input['ro
     $roomName = trim($input['room_name']);
     $adminName = trim($input['admin_name']);
 
+    // Check if required fields are empty
     if (empty($roomId) || empty($roomName) || empty($adminName)) {
         echo json_encode(['status' => 'error', 'message' => 'Room ID, Room Name, and Admin Name cannot be empty']);
         exit();
     }
 
-    // Insert into database
-    $stmt = $conn->prepare("INSERT INTO rooms (room_id, room_name, admin_name) VALUES (?, ?, ?)");
-    if ($stmt === false) {
-        echo json_encode(['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error]);
-        exit();
-    }
+    // Insert into PostgreSQL database
+    $query = "INSERT INTO rooms (room_id, room_name, admin_name) VALUES ($1, $2, $3)";
+    $result = pg_query_params($conn, $query, [$roomId, $roomName, $adminName]);
 
-    $stmt->bind_param("sss", $roomId, $roomName, $adminName);
-
-    if ($stmt->execute()) {
+    if ($result) {
         echo json_encode(['status' => 'success', 'message' => 'Room created successfully']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Execute failed: ' . $stmt->error]);
+        $error = pg_last_error($conn);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to create room: ' . $error]);
     }
 
-    $stmt->close();
-    $conn->close();
+    pg_close($conn);
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request. Please provide Room ID, Room Name, and Admin Name.']);
 }
